@@ -10,13 +10,13 @@ Date: 27/03/22
 
 
 // Number of servos to use
-static const int NUM_SERVOS=2;
+static const int NUM_SERVOS=6;
 
 // Create array of servos
 Servo servo[NUM_SERVOS];
 
 // Create array of pins to attach servos
-static const int servoPin[] = {13,12};
+static const int servoPin[] = {13,12,14,27,26,25};
 
 // Network credentials
 const char* ssid = "Totalplay-2021_2.4Gnormal";
@@ -29,7 +29,7 @@ WiFiServer server(80);
 String header;
 
 // Decode HTTP GET value
-String valueString[] = {String(5), String(5)};
+String valueString[] = {String(5), String(5), String(5), String(5), String(5), String(5)};
 String jointValueString = String(5);
 int pos1 = 0;
 int pos2 = 0;
@@ -101,21 +101,59 @@ void loop(){
                      
             // Web Page
             client.println("</head><body><h1>ESP32 with Servo</h1>");
+
+            // First servo
             client.println("<p>Position: <span id=\"servo1Pos\"></span></p>");          
             client.println("<input type=\"range\" min=\"0\" max=\"180\" class=\"slider\" id=\"servo1Slider\" onchange=\"servo(this.value,1)\" value=\""+valueString[0]+"\"/>");
-            
             client.println("<script>var slider1 = document.getElementById(\"servo1Slider\");");
             client.println("var servo1P = document.getElementById(\"servo1Pos\"); servo1P.innerHTML = slider1.value;");
             client.println("slider1.oninput = function() { slider1.value = this.value; servo1P.innerHTML = this.value; }");
             client.println("$.ajaxSetup({timeout:1000}); function servo(pos,joint) { ");
             client.println("$.get(\"/?joint=\"+joint+\"&value=\" + pos + \"&\"); {Connection: close};}</script>");
 
+            // Second servo
             client.println("<p>Position: <span id=\"servo2Pos\"></span></p>");          
             client.println("<input type=\"range\" min=\"0\" max=\"180\" class=\"slider\" id=\"servo2Slider\" onchange=\"servo(this.value,2)\" value=\""+valueString[1]+"\"/>");
-            
             client.println("<script>var slider2 = document.getElementById(\"servo2Slider\");");
             client.println("var servo2P = document.getElementById(\"servo2Pos\"); servo2P.innerHTML = slider2.value;");
             client.println("slider2.oninput = function() { slider2.value = this.value; servo2P.innerHTML = this.value; }");
+            client.println("$.ajaxSetup({timeout:1000}); function servo(pos,joint) { ");
+            client.println("$.get(\"/?joint=\"+joint+\"&value=\" + pos + \"&\"); {Connection: close};}</script>");
+
+
+            // Third servo
+            client.println("<p>Position: <span id=\"servo3Pos\"></span></p>");          
+            client.println("<input type=\"range\" min=\"0\" max=\"180\" class=\"slider\" id=\"servo3Slider\" onchange=\"servo(this.value,3)\" value=\""+valueString[2]+"\"/>");
+            client.println("<script>var slider3 = document.getElementById(\"servo3Slider\");");
+            client.println("var servo3P = document.getElementById(\"servo3Pos\"); servo3P.innerHTML = slider3.value;");
+            client.println("slider3.oninput = function() { slider3.value = this.value; servo3P.innerHTML = this.value; }");
+            client.println("$.ajaxSetup({timeout:1000}); function servo(pos,joint) { ");
+            client.println("$.get(\"/?joint=\"+joint+\"&value=\" + pos + \"&\"); {Connection: close};}</script>");
+
+            // Fourth servo
+            client.println("<p>Position: <span id=\"servo4Pos\"></span></p>");          
+            client.println("<input type=\"range\" min=\"0\" max=\"180\" class=\"slider\" id=\"servo4Slider\" onchange=\"servo(this.value,4)\" value=\""+valueString[3]+"\"/>");
+            client.println("<script>var slider4 = document.getElementById(\"servo4Slider\");");
+            client.println("var servo4P = document.getElementById(\"servo4Pos\"); servo4P.innerHTML = slider4.value;");
+            client.println("slider4.oninput = function() { slider4.value = this.value; servo4P.innerHTML = this.value; }");
+            client.println("$.ajaxSetup({timeout:1000}); function servo(pos,joint) { ");
+            client.println("$.get(\"/?joint=\"+joint+\"&value=\" + pos + \"&\"); {Connection: close};}</script>");
+
+            // Fifth servo
+            client.println("<p>Position: <span id=\"servo5Pos\"></span></p>");          
+            client.println("<input type=\"range\" min=\"0\" max=\"180\" class=\"slider\" id=\"servo5Slider\" onchange=\"servo(this.value,5)\" value=\""+valueString[4]+"\"/>");
+            client.println("<script>var slider5 = document.getElementById(\"servo5Slider\");");
+            client.println("var servo5P = document.getElementById(\"servo5Pos\"); servo5P.innerHTML = slider5.value;");
+            client.println("slider5.oninput = function() { slider5.value = this.value; servo5P.innerHTML = this.value; }");
+            client.println("$.ajaxSetup({timeout:1000}); function servo(pos,joint) { ");
+            client.println("$.get(\"/?joint=\"+joint+\"&value=\" + pos + \"&\"); {Connection: close};}</script>");
+
+            // Sixth servo (gripper servo)
+            client.println("<p>Position: <span id=\"servo6Pos\"></span></p>");          
+            client.println("<input type=\"range\" min=\"0\" max=\"180\" class=\"slider\" id=\"servo6Slider\" onchange=\"servo(this.value,6)\" value=\""+valueString[5]+"\"/>");
+            client.println("<script>var slider6 = document.getElementById(\"servo6Slider\");");
+            client.println("var servo6P = document.getElementById(\"servo6Pos\"); servo6P.innerHTML = slider6.value;");
+            client.println("slider6.oninput = function() { slider6.value = this.value; servo6P.innerHTML = this.value; }");
             client.println("$.ajaxSetup({timeout:1000}); function servo(pos,joint) { ");
             client.println("$.get(\"/?joint=\"+joint+\"&value=\" + pos + \"&\"); {Connection: close};}</script>");
            
