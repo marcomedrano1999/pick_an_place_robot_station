@@ -1,4 +1,4 @@
-clear; close all; clc;
+%clear; close all; clc;
 
 syms t1 t3 t5 t7 t8
 
@@ -32,4 +32,17 @@ A15 = trans([0 0 D15]);
 
 T_0_9 = A1*A2*A3*A4*A5*A6*A7*A8*A9*A10*A11*A12*A13*A14*A15;
 
+B1 = r_z(t1)*trans([0 0 D1]);
+B2 = trans([0 0 D2])*r_x(-90);
+B3 = r_z(t3);
+B4 = r_x(90);
+B5 = trans([0 0 D6])*r_x(-90);
+B6 = r_z(t5);
+B7 = r_x(90);
+B8 = trans([0 0 D10]) * r_x(-90);
+B9 = r_z(t7);
+B10 = r_x(90);
+B11 = trans([0 0 D14])*r_z(t8);
+B12 = trans([0 0 D15]);
 
+T_0_12 = B1*B2*B3*B4*B5*B6*B7*B8*B9*B10*B11*B12;

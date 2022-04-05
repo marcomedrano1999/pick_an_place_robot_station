@@ -162,24 +162,43 @@ void loop(){
             //GET /?value=180& HTTP/1.1
             if(header.indexOf("GET /?joint=")>=0) {
 
-              // Get joint number
-              pos1 = header.indexOf('=');
-              pos2 = header.indexOf('&');
-              jointValueString = header.substring(pos1+1, pos2);
-              int jointNum = jointValueString.toInt()-1;
-    
-              Serial.print("Servo: ");
-              Serial.print(jointValueString);
-          
-              // Get pos
-              pos1 = header.indexOf('=',pos2+1);
-              pos2 = header.indexOf('&',pos2+1);
-              valueString[jointNum] = header.substring(pos1+1, pos2);
-              
-              //Rotate the servo
-              servo[jointNum].write(valueString[jointNum].toInt());
-              Serial.print("  pos: ");
-              Serial.println(valueString[jointNum]); 
+              // reset index values
+              pos1 = 0;
+              pos2 = 0;
+
+              while(pos1!=-1 && pos2 != -1){
+
+                // Get joint number
+                pos1 = header.indexOf('=',pos2+1);
+                pos2 = header.indexOf('&',pos2+1);
+
+                // exit if no idx found
+                if(pos1==-1 || pos2==-1)
+                  continue;
+
+                // get joint idx
+                jointValueString = header.substring(pos1+1, pos2);
+                int jointNum = jointValueString.toInt()-1;
+      
+                Serial.print("Servo: ");
+                Serial.print(jointValueString);
+            
+                // Get joint position idxs
+                pos1 = header.indexOf('=',pos2+1);
+                pos2 = header.indexOf('&',pos2+1);
+
+                // exit if no idx found
+                if(pos1==-1 || pos2==-1)
+                  continue;
+
+                // get joint position
+                valueString[jointNum] = header.substring(pos1+1, pos2);
+                
+                //Rotate the servo
+                servo[jointNum].write(valueString[jointNum].toInt());
+                Serial.print("  pos: ");
+                Serial.println(valueString[jointNum]); 
+              }
             }         
             // The HTTP response ends with another blank line
             client.println();
