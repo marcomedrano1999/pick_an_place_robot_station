@@ -1,102 +1,74 @@
 function robot = createRobot()
-D1 = 0.734;
-D2 = 0.1783;
-D5 = 1.02;
-D8 = 1.29;
-D11 = 0.584;
-D12 = 0.11;
+%% Define links lenghts
+LENGHT_JNT_1 = 0.95;
+LENGHT_JNT_2 = 1.05;
+LENGHT_JNT_3 = 1.3;
+LENGHT_JNT_4 = 0.75;
+LENGHT_GRIPPER = 1.05;
 
-%% Create rigid body model for the robot
-dhparams = [0 0 D1 0;
-            0 -pi/2 D2 0;
-            0 0 0 0;
-            0 pi/2 0 0;
-            0 -pi/2 D5 0;
-            0 0 0 0;
-            0 pi/2 0 0;
-            0 -pi/2 D8 0;
-            0 0 0 0;
-            0 pi/2 0 0;
-            0 0 D11 0;
-            0 0 D12 0];
-robot = rigidBodyTree('Dataformat','row');
-body1 = rigidBody('body1');
-jnt1 = rigidBodyJoint('jnt1','revolute');
-jnt1.PositionLimits=[-pi/2 pi/2];
-setFixedTransform(jnt1,dhparams(1,:),'dh');
-body1.Joint = jnt1;
+%% build model
+robot = rigidBodyTree("DataFormat","column");
+base = robot.Base;
 
-addBody(robot,body1,'base')
-body2 = rigidBody('body2');
-jnt2 = rigidBodyJoint('jnt2','revolute');
-jnt2.PositionLimits=[0 0];
-body3 = rigidBody('body3');
-jnt3 = rigidBodyJoint('jnt3','revolute');
-jnt3.PositionLimits=[-pi/2 pi/2];
-body4 = rigidBody('body4');
-jnt4 = rigidBodyJoint('jnt4','revolute');
-jnt4.PositionLimits=[0 0];
-body5 = rigidBody('body5');
-jnt5 = rigidBodyJoint('jnt5','revolute');
-jnt5.PositionLimits=[0 0];
-body6 = rigidBody('body6');
-jnt6 = rigidBodyJoint('jnt6','revolute');
-jnt6.PositionLimits=[-pi/2 pi/2];
-body7 = rigidBody('body7');
-jnt7 = rigidBodyJoint('jnt7','revolute');
-jnt7.PositionLimits=[0 0];
-body8 = rigidBody('body8');
-jnt8 = rigidBodyJoint('jnt8','revolute');
-jnt8.PositionLimits=[0 0];
-body9 = rigidBody('body9');
-jnt9 = rigidBodyJoint('jnt9','revolute');
-jnt9.PositionLimits=[-pi/2 pi/2];
-body10 = rigidBody('body10');
-jnt10 = rigidBodyJoint('jnt10','revolute');
-jnt10.PositionLimits=[0 0];
-body11 = rigidBody('body11');
-jnt11 = rigidBodyJoint('jnt11','revolute');
-jnt11.PositionLimits=[-pi/2 pi/2];
-body12 = rigidBody('EndEffector_Link');
-jnt12 = rigidBodyJoint('EndEffector','revolute');
-jnt12.PositionLimits=[0 0];
+%% Add links
+rotatingBase = rigidBody("rotating_base");
+arm1 = rigidBody("arm1");
+arm2 = rigidBody("arm2");
+arm3 = rigidBody("arm3");
+arm4 = rigidBody("arm4");
+gripper = rigidBody("gripper");
 
-setFixedTransform(jnt2,dhparams(2,:),'dh');
-setFixedTransform(jnt3,dhparams(3,:),'dh');
-setFixedTransform(jnt4,dhparams(4,:),'dh');
-setFixedTransform(jnt5,dhparams(5,:),'dh');
-setFixedTransform(jnt6,dhparams(6,:),'dh');
-setFixedTransform(jnt7,dhparams(7,:),'dh');
-setFixedTransform(jnt8,dhparams(8,:),'dh');
-setFixedTransform(jnt9,dhparams(9,:),'dh');
-setFixedTransform(jnt10,dhparams(10,:),'dh');
-setFixedTransform(jnt11,dhparams(11,:),'dh');
-setFixedTransform(jnt12,dhparams(12,:),'dh');
+collBase = collisionCylinder(0.25,LENGHT_JNT_1); % cylinder: radius,length
+collBase.Pose = trvec2tform([0 0 LENGHT_JNT_1/2]);
+coll1 = collisionBox(0.1,0.1,LENGHT_JNT_2); % box: length, width, height (x,y,z)
+coll1.Pose = trvec2tform([0 0 LENGHT_JNT_2/2]);
+coll2 = collisionBox(0.1,0.1,LENGHT_JNT_3); % box: length, width, height (x,y,z)
+coll2.Pose = trvec2tform([0 0 LENGHT_JNT_3/2]);
+coll3 = collisionBox(0.1,0.1,LENGHT_JNT_4); % box: length, width, height (x,y,z)
+coll3.Pose = trvec2tform([0 0 LENGHT_JNT_4/2]);
+coll4 = collisionBox(0.1,0.1,LENGHT_GRIPPER); % box: length, width, height (x,y,z)
+coll4.Pose = trvec2tform([0 0 LENGHT_GRIPPER/2]);
+collGripper = collisionSphere(0.125); %sphere: radius
+collGripper.Pose = trvec2tform([0 -0.015 0.025/2]);
 
-body2.Joint = jnt2;
-body3.Joint = jnt3;
-body4.Joint = jnt4;
-body5.Joint = jnt5;
-body6.Joint = jnt6;
-body7.Joint = jnt7;
-body8.Joint = jnt8;
-body9.Joint = jnt9;
-body10.Joint = jnt10;
-body11.Joint = jnt11;
-body12.Joint = jnt12;
+addCollision(rotatingBase,collBase)
+addCollision(arm1,coll1)
+addCollision(arm2,coll2)
+addCollision(arm3,coll3)
+addCollision(arm4,coll4)
+addCollision(gripper,collGripper)
 
-addBody(robot,body2,'body1')
-addBody(robot,body3,'body2')
-addBody(robot,body4,'body3')
-addBody(robot,body5,'body4')
-addBody(robot,body6,'body5')
-addBody(robot,body7,'body6')
-addBody(robot,body8,'body7')
-addBody(robot,body9,'body8')
-addBody(robot,body10,'body9')
-addBody(robot,body11,'body10')
-addBody(robot,body12,'body11')
+%% Add joints
+jntBase = rigidBodyJoint("base_joint","revolute");
+jnt1 = rigidBodyJoint("jnt1","revolute");
+jnt2 = rigidBodyJoint("jnt2","revolute");
+jnt3 = rigidBodyJoint("jnt3","revolute");
+jnt4 = rigidBodyJoint("jnt4","revolute");
+jntGripper = rigidBodyJoint("gripper_joint","revolute");
 
+jnt1.JointAxis = [1 0 0]; % x-axis
+jnt2.JointAxis = [1 0 0];
+jnt3.JointAxis = [1 0 0];
+jntGripper.JointAxis = [0 1 0]; % y-axis
+
+setFixedTransform(jnt1,trvec2tform([0 0 LENGHT_JNT_1]))
+setFixedTransform(jnt2,trvec2tform([0 0 LENGHT_JNT_2]))
+setFixedTransform(jnt3,trvec2tform([0 0 LENGHT_JNT_3]))
+setFixedTransform(jnt4,trvec2tform([0 0 LENGHT_JNT_4]))
+setFixedTransform(jntGripper,trvec2tform([0 0 LENGHT_GRIPPER]))
+
+%% Assembly robot
+
+bodies = {base,rotatingBase,arm1,arm2,arm3,arm4,gripper};
+joints = {[],jntBase,jnt1,jnt2,jnt3,jnt4,jntGripper};
+
+% figure("Name","Assemble Robot","Visible","on")
+for i = 2:length(bodies) % Skip base. Iterate through adding bodies and joints.
+            bodies{i}.Joint = joints{i};
+            addBody(robot,bodies{i},bodies{i-1}.Name)
+%             show(robot,"Collisions","on","Frames","off");
+%             drawnow;
+end
 
 end
 

@@ -5,7 +5,7 @@ function [configSoln, solnInfo] = robotInverseKinematics(robot, tform)
 ik = inverseKinematics('RigidBodyTree',robot);
 weights = [0.25 0.25 0.25 1 1 1];
 initialguess = robot.homeConfiguration;
-[configSoln,solnInfo] = ik('EndEffector_Link',tform,weights,initialguess);
+[configSoln,solnInfo] = ik('gripper',tform,weights,initialguess);
 configSoln = wrapToPi(configSoln);
 end
 
