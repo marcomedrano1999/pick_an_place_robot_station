@@ -1,8 +1,8 @@
 function [jointWaypoints,jointConfigArray] = interpolationJointAngles(currentAngles,desiredAngles, ...
     currentTMatrix, desiredTMatrix)
 
-timeStep = 0.1; % seconds
-toolSpeed = 0.1; % m/s
+timeStep = 1; % seconds
+toolSpeed = 0.5; % m/s
 
 distance = norm(tform2trvec(currentTMatrix)-tform2trvec(desiredTMatrix));
 initTime = 0;

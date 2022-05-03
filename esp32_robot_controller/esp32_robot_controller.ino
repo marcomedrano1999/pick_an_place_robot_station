@@ -150,7 +150,7 @@ void loop(){
 
             // Sixth servo (gripper servo)
             client.println("<p>Position: <span id=\"servo6Pos\"></span></p>");          
-            client.println("<input type=\"range\" min=\"0\" max=\"180\" class=\"slider\" id=\"servo6Slider\" onchange=\"servo(this.value,6)\" value=\""+valueString[5]+"\"/>");
+            client.println("<input type=\"range\" min=\"120\" max=\"180\" class=\"slider\" id=\"servo6Slider\" onchange=\"servo(this.value,6)\" value=\""+valueString[5]+"\"/>");
             client.println("<script>var slider6 = document.getElementById(\"servo6Slider\");");
             client.println("var servo6P = document.getElementById(\"servo6Pos\"); servo6P.innerHTML = slider6.value;");
             client.println("slider6.oninput = function() { slider6.value = this.value; servo6P.innerHTML = this.value; }");
