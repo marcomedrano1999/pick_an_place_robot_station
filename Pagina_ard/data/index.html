@@ -1,19 +1,29 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Servidor Web Esp8266</title>
+    <meta name = "viewport" content="wodth=device.width, initial-scale=1.0">
     <link rel="stylesheet" href="estilos.css">
+    <title>Servidor Web Pick & Place Sensing Color</title>
 </head>
 <body>
-    <h1 class="titulo">Servidor Web ESP8266</h1>
+    <h1 class="titulo"> Servidor Web Pick & Place Sensing Color </h1>
 
     <div class="caja">
-        <p><button class="button button2" onclick=location.href="/RELE=ON"> Encender</button></p> 
-        <p><button class="button" onclick=location.href="/RELE=OFF" >Apagar</button></p> 
-        <p class="titulo">Estado: %ESTADO_RELE%</p>
-    </div>
         
+        <p><button class="button" onclick=location.href="/ENCENDIDO">Arranque</button></p>
+        <p><button class="button1" onclick=location.href="/APAGADO">Paro</button></p>
+        <p><button class="button3" onclick=location.href="/EMERGENCIA">Paro De Emergencia</button></p>
+        <p><button class="button2" onclick=location.href="/ANGULO">Movimiento Libre</button></p>
+        <p class="titulo2">Ángulo %Angulo_Del_Brazo%</p>
+        <h1 class="CR"> Bloques Rojos </h1>
+        <h1 class="CA"> Bloques Azules </h1>
+        <h1 class="CV"> Bloques Verdes </h1>
+        <p class="titulo3">Ángulo %Cantidad_Rojo%</p>
+        <p class="titulo4">Ángulo %Cantidad_Azul%</p>
+        <p class="titulo5">Ángulo %Cantidad_Verde%</p>
+
+    </div>
+
 </body>
 </html>
