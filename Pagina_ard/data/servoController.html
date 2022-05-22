@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <style>
+    body {
+      text-align: center;
+      font-family: "Trebuchet MS", Arial;
+      margin-left:auto;
+      margin-right:auto;
+    }
+    .slider {
+      width: 300px;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+  <h1>ESP32 with Servo</h1>
+  <p>Position: <span id="servo1Pos"></span></p>
+  <input type="range" min="0" max="180" class="slider" id="servo1Slider" onchange="servo(this.value,1)" value="30">
+  <script>
+    var slider1 = document.getElementById("servo1Slider");
+    var servo1P = document.getElementById("servo1Pos");
+    servo1P.innerHTML = slider1.value;
+    slider1.oninput = function() {
+      slider1.value = this.value;
+      servo1P.innerHTML = this.value;
+    }
+    $.ajaxSetup({timeout:1000});
+    function servo(pos,joint) {
+      $.get("/?joint="+joint+"&value=" + pos + "&");
+      {Connection: close};
+    }
+  </script>
+
+  <p>Position: <span id="servo2Pos"></span></p>
+  <input type="range" min="0" max="180" class="slider" id="servo2Slider" onchange="servo(this.value,2)" value="45">
+  <script>
+    var slider2 = document.getElementById("servo2Slider");
+    var servo2P = document.getElementById("servo2Pos");
+    servo2P.innerHTML = slider2.value;
+    slider2.oninput = function() {
+      slider2.value = this.value;
+      servo2P.innerHTML = this.value;
+    }
+    $.ajaxSetup({timeout:1000});
+    function servo(pos,joint) {
+      $.get("/?joint="+joint+"&value=" + pos + "&");
+      {Connection: close};
+    }
+  </script>
+
+  <p>Position: <span id="servo3Pos"></span></p>
+  <input type="range" min="0" max="180" class="slider" id="servo3Slider" onchange="servo(this.value,3)" value="60">
+  <script>
+    var slider3 = document.getElementById("servo3Slider");
+    var servo3P = document.getElementById("servo3Pos");
+    servo3P.innerHTML = slider3.value;
+    slider3.oninput = function() {
+      slider3.value = this.value;
+      servo3P.innerHTML = this.value;
+    }
+    $.ajaxSetup({timeout:1000});
+    function servo(pos,joint) {
+      $.get("/?joint="+joint+"&value=" + pos + "&");
+      {Connection: close};
+    }
+  </script>
+
+  <p>Position: <span id="servo4Pos"></span></p>
+  <input type="range" min="0" max="180" class="slider" id="servo4Slider" onchange="servo(this.value,4)" value="75">
+  <script>
+    var slider4 = document.getElementById("servo4Slider");
+    var servo4P = document.getElementById("servo4Pos");
+    servo4P.innerHTML = slider4.value;
+    slider4.oninput = function() {
+      slider4.value = this.value;
+      servo4P.innerHTML = this.value;
+    }
+    $.ajaxSetup({timeout:1000});
+    function servo(pos,joint) {
+      $.get("/?joint="+joint+"&value=" + pos + "&");
+      {Connection: close};
+    }
+  </script>
+
+  <p>Position: <span id="servo5Pos"></span></p>
+  <input type="range" min="0" max="180" class="slider" id="servo5Slider" onchange="servo(this.value,5)" value="90">
+  <script>
+    var slider5 = document.getElementById("servo5Slider");
+    var servo5P = document.getElementById("servo5Pos");
+    servo5P.innerHTML = slider5.value;
+    slider5.oninput = function() {
+      slider5.value = this.value;
+      servo5P.innerHTML = this.value;
+    }
+    $.ajaxSetup({timeout:1000});
+    function servo(pos,joint) {
+      $.get("/?joint="+joint+"&value=" + pos + "&");
+      {Connection: close};
+    }
+  </script>
+
+  <p>Position: <span id="servo6Pos"></span></p>
+  <input type="range" min="120" max="180" class="slider" id="servo6Slider" onchange="servo(this.value,6)" value="135">
+  <script>
+    var slider6 = document.getElementById("servo6Slider");
+    var servo6P = document.getElementById("servo6Pos");
+    servo6P.innerHTML = slider6.value;
+    slider6.oninput = function() {
+      slider6.value = this.value;
+      servo6P.innerHTML = this.value;
+    }
+    $.ajaxSetup({timeout:1000});
+    function servo(pos,joint) {
+      $.get("/?joint="+joint+"&value=" + pos + "&");
+      {Connection: close};
+    }
+  </script>
+
+  <p><button class="button" onclick=location.href="/RETURN">Volver</button></p>
+</body>
+</html>
