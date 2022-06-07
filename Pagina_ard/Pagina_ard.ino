@@ -1,7 +1,7 @@
 /*
 Web server and robot controller scketch
 
-Author: Micheller Andrade
+Author: Michelle Andrade
 Modified by: Marco Medrano
 Date: 23/05/2022
 */
@@ -109,8 +109,8 @@ class jointVector{
 
 
 // Wifi data 
-const char* ssid = "Totalplay-2021_2.4Gnormal";
-const char* password = "Totalplay11";
+const char* ssid = "";     // Introduce network name
+const char* password = ""; // Introduce password
 
 // Set static IP
 IPAddress ip(192,168, 0, 10);
@@ -131,6 +131,10 @@ const int objectDetectedPin2 = 35;                                 // Flag for o
 const int PinEstado = 2; //Pin donde estará la señal del relé prendido o apagado
 String Pin_Estado; //Pin para mandar el estado a la página web
 
+int num_rojo=0;
+int num_azul=0;
+int num_verde=0;
+
 String processor(const String& var){
   Serial.println(var);
 
@@ -144,12 +148,84 @@ String processor(const String& var){
   else if(var=="Angulo_Del_Brazo")
     return "90°";
   else if(var=="Cantidad_Rojo")
-    return "32";
+    return String(num_rojo);
   else if(var=="Cantidad_Azul")
-    return "41";
+    return String(num_azul);
   else if(var=="Cantidad_Verde")
-    return "12";
+    return String(num_verde);
   return String();
+}
+
+
+
+jointVector interpolation(jointVector& init_joint, jointVector& end_joint,int num_steps,int step){
+    return init_joint + (end_joint-init_joint)*(step-1)/(num_steps-1);
+}
+
+void moveServos(int* jointAngles){
+  // move servos
+  for(int n=0; n < NUM_SERVOS-1; n++){
+    servo[n].write(jointAngles[n]);
+  }
+}
+
+
+
+// Set robot velocity
+float velocity=10;
+
+// Declare fix joint positions  ****** POSITIONS NEED TO BE SET UP *****
+jointVector homePosition = jointVector(90,48,25,150,0);         // Robot home position
+jointVector conveyorBelt = jointVector(99,65,18,146,0);         // Gripper up to the conveyor belt
+jointVector redCan = jointVector(6,56,41,152,0);               // Gripper up to the red can
+jointVector blueCan = jointVector(27,56,37,152,0);              // Gripper up to the blue can
+jointVector greenCan = jointVector(20,60,30,137,0);             // Gripper up to the green can
+jointVector currentPosition = jointVector(90,48,25,150,0);      // Current position
+
+void gripper(bool action){
+  /*
+  Function to control the gripper.
+  If the input is true, the gripper will
+  close, and it will open otherwise
+  The gripper is in the sixth element of
+  the servo array.
+  */
+
+  if(action){
+    // Close gripper
+    servo[5].write(163);
+  }
+  else{
+    // Open it otherwise
+    servo[5].write(120);
+  }
+
+  delay(500);
+  return;
+}
+
+void moveRobot(jointVector& init_joint, jointVector& end_joint, float velocity){
+  // Get distance between points
+  float distance=(end_joint-init_joint).norm();
+  Serial.print("Distance: ");
+  Serial.println(distance);
+  // Compute steps
+  int steps = int(distance/velocity);
+  Serial.print("Steps: ");
+  Serial.println(steps);
+
+  if(steps==1){
+    moveServos(end_joint.getJoints());  
+    delay(100);
+  }
+  else{
+    for(int i = 1; i <= steps; i++){
+          currentPosition = interpolation(init_joint,end_joint,steps,i);
+          moveServos(currentPosition.getJoints());
+          delay(100);
+    }
+  }
+  Serial.println("Finish moving");
 }
 
 void setup(){
@@ -217,7 +293,7 @@ void setup(){
   server.on("/ANGULO", HTTP_GET, [](AsyncWebServerRequest *request){
     
     request->send(SPIFFS, "/servoController.html", String(), false, processor);
-  });
+  }); 
 
   // Start the server
   server.begin();
@@ -227,67 +303,10 @@ void setup(){
     servo[n].attach(servoPin[n]);  // attaches the servo on the servoPin to the servo object
   }
 
+  //  Start robot from home position
+  moveServos(homePosition.getJoints());
+
 }
-
-
-
-
-jointVector interpolation(jointVector& init_joint, jointVector& end_joint,int num_steps,int step){
-    return init_joint + (end_joint-init_joint)*(step-1)/(num_steps-1);
-}
-
-void moveServos(int* jointAngles){
-  // move servos
-  for(int n=0; n < NUM_SERVOS-1; n++){
-    servo[n].write(jointAngles[n]);
-  }
-}
-
-
-
-
-// Set robot velocity
-float velocity=10;
-
-// Declare fix joint positions  ****** POSITIONS NEED TO BE SET UP *****
-jointVector homePosition = jointVector();         // Robot home position
-jointVector conveyorBelt = jointVector();         // Gripper up to the conveyor belt
-jointVector redCan = jointVector();               // Gripper up to the red can
-jointVector blueCan = jointVector();              // Gripper up to the blue can
-jointVector greenCan = jointVector();             // Gripper up to the green can
-jointVector currentPosition = jointVector();      // Current position
-
-void gripper(bool action){
-  /*
-  Function to control the gripper.
-  If the input is true, the gripper will
-  close, and it will open otherwise
-  The gripper is in the sixth element of
-  the servo array.
-  */
-
-  if(action==true){
-    servo[5].write(180);
-    return;
-  }
-  // Open it otherwise
-  servo[5].write(120);
-}
-
-void moveRobot(jointVector& init_joint, jointVector& end_joint, float velocity){
-  // Get distance between points
-  float distance=(end_joint-init_joint).norm();
-
-  // Compute steps
-  int steps = int(distance/velocity);
-
-  for(int i = 1; i <= steps; i++){
-        currentPosition = interpolation(init_joint,end_joint,steps,i);
-        moveServos(currentPosition.getJoints());
-    }
-}
-
-
 
 void loop(){
 
@@ -306,39 +325,84 @@ void loop(){
   */
   // Execute only if the operator pushed the start button
   if(IN_OPERATION){
+
+    Serial.println("En operacion...");
     int pin_1 = digitalRead(objectDetectedPin1);
     int pin_2 = digitalRead(objectDetectedPin2);
     if(pin_1 or pin_2){
 
-      // Check if the robot is in home
-      // If not, move it there
-      if(!(homePosition==currentPosition))
-        moveRobot(currentPosition,homePosition,velocity);
+      servo[5].write(120);
 
+      Serial.println("Mover a banda");
       // Move robot to take object
       moveRobot(homePosition,conveyorBelt,velocity);
 
-      // Take object
-      gripper(true);
+      delay(1000);
 
+      Serial.println("Cerrar pinza");
+      // Take object
+      servo[5].write(163);
+
+      delay(1000);
+
+      Serial.println("Mover a home");
       // Go back to home position
       moveRobot(conveyorBelt,homePosition,velocity);
 
+      delay(1000);
+
       // Red object
-      if(pin_1==0 and pin_2)
+      if(pin_1==0 and pin_2){
+        Serial.println("Mover a rojo");
         moveRobot(homePosition,redCan,velocity);
+
+        num_rojo++;
+
+        delay(1000);
+        // drop object
+        Serial.println("Soltar objeto");
+        servo[5].write(120);
+
+        delay(1000);
         
+        Serial.println("Mover a home");
+        moveRobot(redCan,homePosition,velocity);
+      }
       // Green object
-      else if(pin_1 and pin_2==0)
+      else if(pin_1 and pin_2==0){
+        Serial.println("Mover a verde");
         moveRobot(homePosition,greenCan,velocity);
-      
+        num_verde++;
+
+        delay(1000);
+        
+        // drop object
+        Serial.println("Soltar objeto");
+        servo[5].write(120);
+
+        delay(1000);
+        Serial.println("Mover a home");
+        moveRobot(greenCan,homePosition,velocity);
+      }
       // Blue object
-      else
+      else{
+        Serial.println("Mover a azul");
         moveRobot(homePosition,blueCan,velocity);
 
-      // drop object
-      gripper(false);
+        num_azul++;
+
+        delay(1000);
+        // drop object
+        Serial.println("Soltar objeto");
+        servo[5].write(120);
+
+        delay(1000);
+        Serial.println("Mover a home");
+        moveRobot(blueCan,homePosition,velocity);
+      }
+      delay(2000);
     }
+    
   }
 
   
